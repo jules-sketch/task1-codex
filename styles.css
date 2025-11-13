@@ -1,0 +1,149 @@
+:root {
+  font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #f4f7ff;
+  background-color: #0b2c52;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(145deg, #0b2c52, #114a80);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.app {
+  width: min(900px, 100%);
+  background: rgba(11, 44, 82, 0.9);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 18px;
+  padding: 2.5rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+header h1 {
+  font-size: 2.5rem;
+  margin: 0;
+  color: #8fc2ff;
+}
+
+header p {
+  margin-top: 0.5rem;
+  color: #d7e6ff;
+}
+
+.calculator {
+  margin-top: 2rem;
+  background: rgba(17, 74, 128, 0.45);
+  padding: 2rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.inputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  color: #d7e6ff;
+  gap: 0.3rem;
+}
+
+input,
+select {
+  border-radius: 8px;
+  border: none;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0b2c52;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+  margin-top: 1.5rem;
+}
+
+#calculate {
+  background: #47a0ff;
+  color: #0b2c52;
+  font-weight: 700;
+  border: none;
+  border-radius: 999px;
+  padding: 0.85rem 2rem;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#calculate:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.35);
+}
+
+.results {
+  margin-top: 1.5rem;
+  background: rgba(11, 44, 82, 0.7);
+  border-radius: 10px;
+  padding: 1rem 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.result-label {
+  margin: 0;
+  color: #8fc2ff;
+  font-weight: 700;
+}
+
+#result {
+  font-size: 1.5rem;
+  margin: 0.5rem 0 0;
+  color: #ffffff;
+}
+
+#result.error {
+  color: #ff90b5;
+}
+
+.tips {
+  margin-top: 2rem;
+  background: rgba(8, 30, 56, 0.7);
+  border-radius: 14px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tips h2 {
+  margin-top: 0;
+  color: #8fc2ff;
+}
+
+.tips ul {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+  color: #d7e6ff;
+}
+
+@media (max-width: 600px) {
+  .app {
+    padding: 1.5rem;
+  }
+
+  header h1 {
+    font-size: 2rem;
+  }
+}
