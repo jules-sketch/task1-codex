@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Buddie Roman Numeral Calculator</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header>
+        <h1>Buddie</h1>
+        <p>Roman numeral calculator with addition, subtraction, multiplication, and division.</p>
+      </header>
+      <section class="calculator">
+        <div class="inputs">
+          <label>
+            First Roman Numeral
+            <input id="first" type="text" placeholder="e.g. XII" />
+          </label>
+          <label>
+            Second Roman Numeral
+            <input id="second" type="text" placeholder="e.g. IX" />
+          </label>
+        </div>
+        <div class="controls">
+          <label for="operation">Operation</label>
+          <select id="operation">
+            <option value="add">+</option>
+            <option value="subtract">-</option>
+            <option value="multiply">×</option>
+            <option value="divide">÷</option>
+          </select>
+          <button id="calculate">Calculate</button>
+        </div>
+        <div class="results">
+          <p class="result-label">Result</p>
+          <p id="result" aria-live="polite">Enter numerals to begin.</p>
+        </div>
+      </section>
+      <section class="tips">
+        <h2>Roman numeral tips</h2>
+        <ul>
+          <li>Valid symbols: I, V, X, L, C, D, M.</li>
+          <li>Buddie supports numbers from 1 to 3999.</li>
+          <li>Division results are rounded down to the nearest whole number.</li>
+        </ul>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
