@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Buddie Roman Numeral Calculator</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header>
+        <h1>Buddie</h1>
+        <p class="tagline">Roman Numeral Calculator</p>
+      </header>
+      <section class="display-panel">
+        <output id="history" aria-live="polite"></output>
+        <output id="display" aria-live="polite">—</output>
+      </section>
+      <section class="controls" aria-label="Calculator keypad">
+        <div class="keypad" role="group">
+          <button type="button" class="key" data-value="I">I</button>
+          <button type="button" class="key" data-value="V">V</button>
+          <button type="button" class="key" data-value="X">X</button>
+          <button type="button" class="key" data-value="L">L</button>
+          <button type="button" class="key" data-value="C">C</button>
+          <button type="button" class="key" data-value="D">D</button>
+          <button type="button" class="key" data-value="M">M</button>
+        </div>
+        <div class="operators" role="group">
+          <button type="button" class="key" data-value=" + ">+</button>
+          <button type="button" class="key" data-value=" - ">−</button>
+          <button type="button" class="key" data-value=" × ">×</button>
+          <button type="button" class="key" data-value=" ÷ ">÷</button>
+        </div>
+        <div class="actions" role="group">
+          <button type="button" id="clear">Clear</button>
+          <button type="button" id="delete">Delete</button>
+          <button type="button" id="equals">=</button>
+        </div>
+      </section>
+      <section class="notes">
+        <p>Enter roman numerals and choose an operation. Buddie only works with positive values (1-3999).</p>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
