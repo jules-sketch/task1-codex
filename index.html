@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buddie Roman Calculator</title>
+  <style>
+    :root {
+      --deep-blue: #0d1b2a;
+      --mid-blue: #1b4d89;
+      --soft-blue: #2d6ba1;
+      --glow-blue: #5fa8d3;
+      --pale-blue: #c2e7ff;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 20% 20%, var(--soft-blue), var(--deep-blue));
+      color: var(--pale-blue);
+    }
+
+    .calculator {
+      background: linear-gradient(145deg, var(--mid-blue), var(--deep-blue));
+      border: 1px solid var(--glow-blue);
+      border-radius: 18px;
+      box-shadow: 0 12px 32px rgba(0, 55, 115, 0.35);
+      width: 360px;
+      max-width: 90vw;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--pale-blue);
+    }
+
+    .display {
+      background: linear-gradient(135deg, rgba(45, 107, 161, 0.3), rgba(13, 27, 42, 0.9));
+      border: 1px solid var(--glow-blue);
+      border-radius: 12px;
+      padding: 18px;
+      min-height: 72px;
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .readout {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-align: right;
+      color: var(--pale-blue);
+    }
+
+    .status {
+      font-size: 13px;
+      text-align: right;
+      margin-top: 6px;
+      color: var(--glow-blue);
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 14px 12px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--pale-blue);
+      background: var(--soft-blue);
+      box-shadow: 0 6px 12px rgba(0, 55, 115, 0.25);
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 16px rgba(0, 55, 115, 0.35);
+      background: var(--glow-blue);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 10px rgba(0, 55, 115, 0.25);
+      background: var(--soft-blue);
+    }
+
+    .span-2 {
+      grid-column: span 2;
+    }
+
+    .function {
+      background: linear-gradient(145deg, var(--glow-blue), var(--soft-blue));
+    }
+
+    .operation {
+      background: linear-gradient(145deg, var(--mid-blue), var(--deep-blue));
+    }
+
+    .pill {
+      border-radius: 20px;
+    }
+
+    @media (max-width: 420px) {
+      .calculator {
+        width: 100%;
+      }
+
+      button {
+        padding: 12px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator" aria-label="Buddie Roman Numeral Calculator">
+    <div class="header">
+      <h1>Buddie</h1>
+    </div>
+    <div class="display" aria-live="polite">
+      <div class="readout" id="display">I</div>
+      <div class="status" id="status">Enter roman numerals using the blue buttons.</div>
+    </div>
+    <div class="controls">
+      <button class="function pill" data-action="clear">Clear</button>
+      <button class="function pill" data-action="delete">Del</button>
+      <button class="operation" data-action="op" data-op="/">÷</button>
+      <button class="operation" data-action="op" data-op="*">×</button>
+
+      <button data-symbol="M">M</button>
+      <button data-symbol="D">D</button>
+      <button data-symbol="C">C</button>
+      <button class="operation" data-action="op" data-op="-">−</button>
+
+      <button data-symbol="L">L</button>
+      <button data-symbol="X">X</button>
+      <button data-symbol="V">V</button>
+      <button class="operation" data-action="op" data-op="+">+</button>
+
+      <button class="span-2" data-symbol="I">I</button>
+      <button class="span-2 operation" data-action="equals">=</button>
+    </div>
+  </div>
+
+  <script>
+    const displayEl = document.getElementById('display');
+    const statusEl = document.getElementById('status');
+    const controls = document.querySelector('.controls');
+
+    let currentRoman = 'I';
+    let storedRoman = null;
+    let operator = null;
+    let justCalculated = false;
+
+    const romanPattern = /^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/;
+
+    const romanValues = {
+      I: 1,
+      V: 5,
+      X: 10,
+      L: 50,
+      C: 100,
+      D: 500,
+      M: 1000,
+    };
+
+    function romanToInt(roman) {
+      if (!roman || !romanPattern.test(roman)) return null;
+      let total = 0;
+      let i = 0;
+      while (i < roman.length) {
+        const current = romanValues[roman[i]];
+        const next = romanValues[roman[i + 1]];
+        if (next && next > current) {
+          total += next - current;
+          i += 2;
+        } else {
+          total += current;
+          i += 1;
+        }
+      }
+      return total;
+    }
+
+    function intToRoman(num) {
+      if (num < 1 || num > 4999 || !Number.isInteger(num)) return null;
+      const numerals = [
+        [1000, 'M'], [900, 'CM'], [500, 'D'], [400, 'CD'],
+        [100, 'C'], [90, 'XC'], [50, 'L'], [40, 'XL'],
+        [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I'],
+      ];
+      let result = '';
+      let remaining = num;
+      for (const [value, symbol] of numerals) {
+        while (remaining >= value) {
+          result += symbol;
+          remaining -= value;
+        }
+      }
+      return result;
+    }
+
+    function updateDisplay(text, message = '') {
+      displayEl.textContent = text;
+      statusEl.textContent = message;
+    }
+
+    function handleSymbol(symbol) {
+      if (justCalculated) {
+        currentRoman = symbol;
+        justCalculated = false;
+      } else {
+        currentRoman = (currentRoman + symbol).slice(0, 18);
+      }
+      updateDisplay(currentRoman, 'Building roman numeral...');
+    }
+
+    function setOperator(op) {
+      const value = romanToInt(currentRoman);
+      if (value === null) {
+        updateDisplay(currentRoman, 'Invalid roman numeral.');
+        return;
+      }
+      storedRoman = currentRoman;
+      operator = op;
+      currentRoman = 'I';
+      justCalculated = false;
+      updateDisplay(currentRoman, `Ready for next value (${op}).`);
+    }
+
+    function clearAll() {
+      currentRoman = 'I';
+      storedRoman = null;
+      operator = null;
+      justCalculated = false;
+      updateDisplay(currentRoman, 'Enter roman numerals using the blue buttons.');
+    }
+
+    function deleteSymbol() {
+      if (justCalculated) return clearAll();
+      currentRoman = currentRoman.length > 1 ? currentRoman.slice(0, -1) : 'I';
+      updateDisplay(currentRoman, 'Adjusted numeral.');
+    }
+
+    function compute() {
+      if (!operator || storedRoman === null) {
+        updateDisplay(currentRoman, 'Choose an operation.');
+        return;
+      }
+
+      const first = romanToInt(storedRoman);
+      const second = romanToInt(currentRoman);
+      if (first === null || second === null) {
+        updateDisplay(currentRoman, 'Invalid roman numeral in equation.');
+        return;
+      }
+
+      let result;
+      switch (operator) {
+        case '+':
+          result = first + second;
+          break;
+        case '-':
+          result = first - second;
+          break;
+        case '*':
+          result = first * second;
+          break;
+        case '/':
+          if (second === 0) {
+            updateDisplay(currentRoman, 'Cannot divide by zero.');
+            return;
+          }
+          if (first % second !== 0) {
+            updateDisplay(currentRoman, 'Division must result in a whole number.');
+            return;
+          }
+          result = first / second;
+          break;
+        default:
+          updateDisplay(currentRoman, 'Unknown operation.');
+          return;
+      }
+
+      const romanResult = intToRoman(result);
+      if (!romanResult) {
+        updateDisplay(currentRoman, 'Result out of range (1-4999).');
+        return;
+      }
+
+      currentRoman = romanResult;
+      storedRoman = null;
+      operator = null;
+      justCalculated = true;
+      updateDisplay(currentRoman, 'Result displayed in roman numerals.');
+    }
+
+    controls.addEventListener('click', (event) => {
+      const button = event.target.closest('button');
+      if (!button) return;
+
+      const action = button.dataset.action;
+      if (action === 'clear') return clearAll();
+      if (action === 'delete') return deleteSymbol();
+      if (action === 'op') return setOperator(button.dataset.op);
+      if (action === 'equals') return compute();
+
+      const symbol = button.dataset.symbol;
+      if (symbol) handleSymbol(symbol);
+    });
+
+    clearAll();
+  </script>
+</body>
+</html>
