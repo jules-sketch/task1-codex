@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buddie | Roman Numeral Calculator</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <p class="eyebrow">Blue-only Roman math</p>
+      <h1 class="title">Buddie</h1>
+      <p class="subtitle">
+        A friendly calculator that speaks Roman numerals. Enter two numerals, pick an
+        operation, and Buddie will return the answer as a Roman numeral.
+      </p>
+    </header>
+
+    <section class="calculator" aria-label="Buddie roman numeral calculator">
+      <div class="inputs">
+        <label class="field">
+          <span>First numeral</span>
+          <input id="firstNumeral" name="firstNumeral" autocomplete="off" placeholder="e.g. XII" />
+        </label>
+        <label class="field">
+          <span>Second numeral</span>
+          <input id="secondNumeral" name="secondNumeral" autocomplete="off" placeholder="e.g. VI" />
+        </label>
+      </div>
+
+      <div class="actions" aria-label="Choose operation">
+        <button type="button" class="action" data-op="add">Add</button>
+        <button type="button" class="action" data-op="subtract">Subtract</button>
+        <button type="button" class="action" data-op="multiply">Multiply</button>
+        <button type="button" class="action" data-op="divide">Divide</button>
+        <button type="button" class="ghost" id="clear">Clear</button>
+      </div>
+
+      <div class="result" aria-live="polite" role="status">
+        <p class="result-label">Result</p>
+        <p class="result-value" id="resultValue">Awaiting input</p>
+        <p class="result-note" id="resultNote"></p>
+      </div>
+    </section>
+
+    <section class="guide" aria-label="Roman numeral tips">
+      <h2>How Buddie thinks</h2>
+      <ul>
+        <li>Valid numerals range from I (1) to MMMCMXCIX (3999).</li>
+        <li>Division must yield a whole-number result. Buddie will block fractions.</li>
+        <li>Results must stay above zero—Roman numerals have no symbol for zero.</li>
+      </ul>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
