@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buddie Roman Calculator</title>
+  <style>
+    :root {
+      --blue-900: #0a1f44;
+      --blue-700: #1b4b8a;
+      --blue-500: #2f73d1;
+      --blue-300: #5ea3ff;
+      --blue-100: #d6e8ff;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      color: #e9f2ff;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 20% 20%, var(--blue-700), var(--blue-900));
+    }
+
+    .calculator {
+      width: 360px;
+      background: linear-gradient(145deg, var(--blue-900), var(--blue-700));
+      border: 2px solid var(--blue-500);
+      border-radius: 18px;
+      box-shadow: 0 12px 35px rgba(10, 31, 68, 0.6);
+      overflow: hidden;
+    }
+
+    .header {
+      padding: 18px 20px 10px;
+      border-bottom: 1px solid rgba(94, 163, 255, 0.35);
+      text-align: center;
+    }
+
+    .title {
+      font-size: 1.8rem;
+      letter-spacing: 0.12rem;
+      color: var(--blue-100);
+      margin: 0;
+    }
+
+    .subtitle {
+      margin: 4px 0 0;
+      font-size: 0.9rem;
+      color: var(--blue-300);
+      letter-spacing: 0.05rem;
+    }
+
+    .display {
+      padding: 16px 20px 12px;
+      background: rgba(94, 163, 255, 0.08);
+      border-bottom: 1px solid rgba(94, 163, 255, 0.35);
+      text-align: right;
+    }
+
+    .history {
+      min-height: 24px;
+      color: var(--blue-300);
+      font-size: 0.95rem;
+      margin-bottom: 6px;
+      opacity: 0.8;
+    }
+
+    .current {
+      font-size: 2.2rem;
+      color: var(--blue-100);
+      word-break: break-word;
+    }
+
+    .keys {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      padding: 16px 16px 20px;
+      background: rgba(94, 163, 255, 0.05);
+    }
+
+    button {
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--blue-500), var(--blue-700));
+      color: #f6fbff;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+      box-shadow: 0 6px 12px rgba(10, 31, 68, 0.35);
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(10, 31, 68, 0.45);
+      background: linear-gradient(135deg, var(--blue-300), var(--blue-500));
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 10px rgba(10, 31, 68, 0.35);
+    }
+
+    .operator {
+      background: linear-gradient(135deg, #164f9d, var(--blue-900));
+    }
+
+    .operator:hover {
+      background: linear-gradient(135deg, var(--blue-500), #164f9d);
+    }
+
+    .action {
+      background: linear-gradient(135deg, #0f365e, var(--blue-900));
+    }
+
+    .span-2 {
+      grid-column: span 2;
+    }
+
+    .footnote {
+      padding: 0 18px 16px;
+      text-align: center;
+      color: var(--blue-300);
+      font-size: 0.85rem;
+      opacity: 0.85;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator" aria-label="Buddie Roman Numeral Calculator">
+    <div class="header">
+      <h1 class="title">Buddie</h1>
+      <p class="subtitle">Roman Numeral Calculator</p>
+    </div>
+    <div class="display" aria-live="polite">
+      <div class="history" id="history">&nbsp;</div>
+      <div class="current" id="display">N</div>
+    </div>
+    <div class="keys">
+      <button class="action" data-action="clear">AC</button>
+      <button class="action" data-action="delete">DEL</button>
+      <button class="action" data-action="swap">↔</button>
+      <button class="operator" data-operator="/">÷</button>
+
+      <button data-value="M">M</button>
+      <button data-value="D">D</button>
+      <button data-value="C">C</button>
+      <button class="operator" data-operator="*">×</button>
+
+      <button data-value="L">L</button>
+      <button data-value="X">X</button>
+      <button data-value="V">V</button>
+      <button class="operator" data-operator="-">−</button>
+
+      <button data-value="I">I</button>
+      <button data-value="IV">IV</button>
+      <button data-value="IX">IX</button>
+      <button class="operator" data-operator="+">+</button>
+
+      <button class="span-2" data-action="equals">=</button>
+      <button class="span-2" data-action="negate">±</button>
+    </div>
+    <div class="footnote">Enter Roman numerals, pick an operator, and see the result in Roman form.</div>
+  </div>
+
+  <script>
+    const displayEl = document.getElementById('display');
+    const historyEl = document.getElementById('history');
+    let currentInput = '';
+    let storedValue = null;
+    let currentOperator = null;
+    let lastResult = null;
+
+    const romanMap = [
+      { value: 1000, numeral: 'M' },
+      { value: 900, numeral: 'CM' },
+      { value: 500, numeral: 'D' },
+      { value: 400, numeral: 'CD' },
+      { value: 100, numeral: 'C' },
+      { value: 90, numeral: 'XC' },
+      { value: 50, numeral: 'L' },
+      { value: 40, numeral: 'XL' },
+      { value: 10, numeral: 'X' },
+      { value: 9, numeral: 'IX' },
+      { value: 5, numeral: 'V' },
+      { value: 4, numeral: 'IV' },
+      { value: 1, numeral: 'I' }
+    ];
+
+    function romanToInt(roman) {
+      const isNegative = roman.startsWith('-');
+      const cleaned = isNegative ? roman.slice(1) : roman;
+      if (!cleaned) return NaN;
+      const values = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };
+      let total = 0;
+      let prev = 0;
+      for (let i = cleaned.length - 1; i >= 0; i -= 1) {
+        const value = values[cleaned[i]];
+        if (!value) return NaN;
+        if (value < prev) total -= value; else total += value;
+        prev = value;
+      }
+      return isNegative ? -total : total;
+    }
+
+    function intToRoman(num) {
+      if (num <= 0 || num >= 4000) return null;
+      let remainder = num;
+      let roman = '';
+      for (const { value, numeral } of romanMap) {
+        while (remainder >= value) {
+          roman += numeral;
+          remainder -= value;
+        }
+      }
+      return roman;
+    }
+
+    function formatValue(num) {
+      if (num === 0 || Number.isNaN(num) || num === null) return null;
+      const roman = intToRoman(Math.abs(Math.trunc(num)));
+      if (!roman) return null;
+      return num < 0 ? `-${roman}` : roman;
+    }
+
+    function updateDisplay(value) {
+      displayEl.textContent = value || 'N';
+    }
+
+    function updateHistory(text) {
+      historyEl.textContent = text || '\u00A0';
+    }
+
+    function appendValue(value) {
+      if (lastResult && !currentOperator) {
+        currentInput = '';
+        lastResult = null;
+      }
+      currentInput += value;
+      updateDisplay(currentInput);
+    }
+
+    function setOperator(operator) {
+      if (!currentInput && lastResult !== null) {
+        storedValue = lastResult;
+      } else if (currentInput) {
+        const parsed = romanToInt(currentInput);
+        if (Number.isNaN(parsed)) return alert('Invalid Roman numeral');
+        storedValue = parsed;
+      } else if (storedValue === null) {
+        return;
+      }
+      const formatted = formatValue(storedValue);
+      if (!formatted) return alert('Value out of display range (1-3999)');
+      currentOperator = operator;
+      currentInput = '';
+      updateHistory(`${formatted} ${operator}`);
+      updateDisplay('');
+    }
+
+    function compute() {
+      if (storedValue === null || !currentOperator) return;
+      const parsed = romanToInt(currentInput || formatValue(storedValue));
+      if (Number.isNaN(parsed)) return alert('Invalid Roman numeral');
+      const leftText = formatValue(storedValue);
+      const rightText = formatValue(parsed);
+      if (!leftText || !rightText) return alert('Value out of display range (1-3999)');
+      let result;
+      switch (currentOperator) {
+        case '+':
+          result = storedValue + parsed;
+          break;
+        case '-':
+          result = storedValue - parsed;
+          break;
+        case '*':
+          result = storedValue * parsed;
+          break;
+        case '/':
+          result = parsed === 0 ? NaN : storedValue / parsed;
+          break;
+        default:
+          return;
+      }
+      const formattedResult = formatValue(result);
+      if (!formattedResult) return alert('Result out of range (1-3999)');
+      updateHistory(`${leftText} ${currentOperator} ${rightText} =`);
+      updateDisplay(formattedResult);
+      storedValue = result;
+      lastResult = romanToInt(formattedResult);
+      currentInput = '';
+      currentOperator = null;
+    }
+
+    function clearAll() {
+      currentInput = '';
+      storedValue = null;
+      currentOperator = null;
+      lastResult = null;
+      updateHistory('');
+      updateDisplay('');
+    }
+
+    function deleteLast() {
+      currentInput = currentInput.slice(0, -1);
+      updateDisplay(currentInput);
+    }
+
+    function swapValues() {
+      if (!currentInput && storedValue !== null) {
+        currentInput = formatValue(storedValue) || '';
+        storedValue = null;
+      } else if (currentInput && storedValue !== null) {
+        const temp = currentInput;
+        currentInput = formatValue(storedValue) || '';
+        storedValue = romanToInt(temp);
+      }
+      updateDisplay(currentInput);
+      updateHistory(storedValue ? formatValue(storedValue) : '');
+    }
+
+    function negateValue() {
+      if (!currentInput) return;
+      const parsed = romanToInt(currentInput);
+      if (Number.isNaN(parsed)) return alert('Invalid Roman numeral');
+      if (parsed === 0) return alert('Cannot display zero in Roman numerals');
+      currentInput = parsed > 0 ? `-${currentInput}`.replace(/^-+/, '-') : currentInput.replace(/^-/, '');
+      updateDisplay(currentInput);
+    }
+
+    document.querySelector('.keys').addEventListener('click', (event) => {
+      const { target } = event;
+      if (target.dataset.value) {
+        appendValue(target.dataset.value);
+        return;
+      }
+      if (target.dataset.operator) {
+        setOperator(target.dataset.operator);
+        return;
+      }
+      const action = target.dataset.action;
+      if (!action) return;
+
+      switch (action) {
+        case 'clear':
+          clearAll();
+          break;
+        case 'delete':
+          deleteLast();
+          break;
+        case 'equals':
+          compute();
+          break;
+        case 'swap':
+          swapValues();
+          break;
+        case 'negate':
+          negateValue();
+          break;
+        default:
+      }
+    });
+  </script>
+</body>
+</html>
