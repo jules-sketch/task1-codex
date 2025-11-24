@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>buddie | Roman Numeral Calculator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app">
+    <header class="app__header">
+      <h1 class="app__title">buddie</h1>
+      <p class="app__subtitle">Roman numeral calculator</p>
+    </header>
+
+    <section class="display">
+      <div class="display__label">Display</div>
+      <div class="display__screen" aria-live="polite">
+        <div class="display__history" id="history"></div>
+        <div class="display__current" id="current">N</div>
+      </div>
+    </section>
+
+    <section class="controls" aria-label="Calculator controls">
+      <div class="controls__grid">
+        <button class="btn btn--action" data-action="clear">AC</button>
+        <button class="btn btn--action" data-action="backspace">⌫</button>
+        <button class="btn btn--action" data-action="swap">±</button>
+        <button class="btn btn--operator" data-operator="/">÷</button>
+
+        <button class="btn" data-roman="M">M</button>
+        <button class="btn" data-roman="D">D</button>
+        <button class="btn" data-roman="C">C</button>
+        <button class="btn btn--operator" data-operator="*">×</button>
+
+        <button class="btn" data-roman="L">L</button>
+        <button class="btn" data-roman="X">X</button>
+        <button class="btn" data-roman="V">V</button>
+        <button class="btn btn--operator" data-operator="-">−</button>
+
+        <button class="btn" data-roman="I">I</button>
+        <button class="btn btn--zero" data-roman="N">N</button>
+        <button class="btn btn--action" data-action="convert">=</button>
+        <button class="btn btn--operator" data-operator="+">+</button>
+
+        <button class="btn btn--primary" data-action="evaluate" aria-label="Calculate">Calculate</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="scripts.js"></script>
+</body>
+</html>
